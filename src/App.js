@@ -1,14 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import './App.css';
-import WalletConnect from './WalletConnect';
 import BaseMeme from './BaseMeme'; 
 import '@rainbow-me/rainbowkit/styles.css';
 import {
   getDefaultConfig,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
-import { WagmiProvider } from 'wagmi';
+import { WagmiProvider, http } from 'wagmi';
 import {
   base,
 } from 'wagmi/chains';
@@ -22,7 +21,9 @@ const config = getDefaultConfig({
   appName: 'basememe',
   projectId: '76641386b896e258eb94f6c6bbc6942b',
   chains: [base],
-  ssr: false, 
+  transports: {
+    [base.id]: http('https://base.drpc.org'),
+  },
 });
 
 const queryClient = new QueryClient();

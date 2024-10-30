@@ -4,18 +4,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccount } from 'wagmi';
+import { useAccount, useReadContract } from 'wagmi';
 
 function BaseMeme() {
   // 定义状态变量
   const { isConnected, address } = useAccount();
   const walletAddress = address
-  // const [walletAddress, setWalletAddress] = useState('');
-  // const [isConnected, setisConnected] = useState(false)
-  const [totalSupply, setTotalSupply] = useState('');
-  const [tokenBalance, setTokenBalance] = useState('');
-  const [isMinting, setIsMinting] = useState(false); // 添加状态变量以跟踪铸造状态
-  const [mintingEnded, setMintingEnded] = useState(false); // 新增状态变量
+  // const [totalSupply, setTotalSupply] = useState('');
+  // const [tokenBalance, setTokenBalance] = useState('');
+  const [isMinting, setIsMinting] = useState(false); // 地址铸造状态
+  // const [mintingEnded, setMintingEnded] = useState(false); // 新增状态变量
   const [showSuccessModal, setShowSuccessModal] = useState(false); // 添加状态变量以控制弹窗显示
   const [lastBalance, setLastBalance] = useState(0); // 添加状态变量以存储上次余额
   const [mintTx, setMintTx] = useState(''); // 添加状态变量以存储交易哈希
@@ -24,26 +22,82 @@ function BaseMeme() {
   const [timeLeft, setTimeLeft] = useState(0); // 新增状态变量
   const [showHelpModal, setShowHelpModal] = useState(false); // 新增说明弹窗状态
 
-  // 获取总供应量和当前钱包的代币余额
-  const getTotalSupply = async () => {
-    const contractAddress = '0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A';
-    const abi = [
-      "function totalSupply() view returns (uint256)",
-      "function balanceOf(address owner) view returns (uint256)"
-    ];
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    console.log(window.ethereum)
-    const contract = new ethers.Contract(contractAddress, abi, provider);
-    const totalSupply = await contract.totalSupply();
-    setTotalSupply(ethers.utils.formatUnits(totalSupply, 18)); // 根据合约的decimals调整
-
-    // 获取当前钱包的代币余额
-    if (isConnected) {
-      const balance = await contract.balanceOf(walletAddress);
-      // 假设我们将代币余额存储在状态中
-      setTokenBalance(ethers.utils.formatUnits(balance, 18)); // 根据合约的decimals调整
+  const contractABI = [
+    {
+      "inputs": [],
+      "name": "mintingEnded",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "totalSupply",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
     }
+  ];
+
+  const wagmiContractConfig = {
+    address: '0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A', // Replace with your contract address
+    abi: contractABI,
   };
+  // 读取合约铸造状态
+  const { data: mintingEnded, error: err1 } = useReadContract({
+    ...wagmiContractConfig,
+    functionName: 'mintingEnded',
+    args: [],
+  });
+  console.log(err1)
+  // 读取总供应量
+  const { data: totalSupply1, error: err2 } = useReadContract({
+    ...wagmiContractConfig,
+    functionName: 'totalSupply',
+    args: [],
+  });
+  console.log(err2)
+  // 读取代币余额
+  const { data: tokenBalance1, error: err3 } = useReadContract({
+    ...wagmiContractConfig,
+    functionName: 'balanceOf',
+    args: [walletAddress],
+  });
+  console.log(err3)
+  // 将uint格式转成正常格式
+  const totalSupply = ethers.utils.formatUnits(totalSupply1, 18);
+  const tokenBalance = ethers.utils.formatUnits(tokenBalance1, 18);
 
   // 铸造 BMI 的方法
   const mintBMI = async () => {
@@ -75,18 +129,6 @@ function BaseMeme() {
     setIsMinting(false); // 无论成功与否，铸造结束后重置状态
   };
 
-  // 获取铸造状态
-  const getMintingStatus = async () => {
-    const contractAddress = '0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A';
-    const abi = [
-      "function mintingEnded() view returns (bool)"
-    ];
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    const contract = new ethers.Contract(contractAddress, abi, provider);
-    const status = await contract.mintingEnded();
-    setMintingEnded(status); // 更新铸造状态
-  };
-
   // 获取最后铸币时间和下一次铸币间隔
   const getMintingInfo = async () => {
     const contractAddress = '0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A';
@@ -106,10 +148,10 @@ function BaseMeme() {
   // 初始化效果
   useEffect(() => {
     const init = async () => {
-      await getMintingStatus();
+      // await getMintingStatus();
       if(isConnected){
         const walletAddress = address
-        await getTotalSupply();
+        // await getTotalSupply();
         await getMintingInfo(); // 添加此行以获取铸币信息
       }
     };
