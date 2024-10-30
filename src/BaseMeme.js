@@ -34,18 +34,14 @@ function BaseMeme() {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     console.log(window.ethereum)
     const contract = new ethers.Contract(contractAddress, abi, provider);
-    try {
-      const totalSupply = await contract.totalSupply();
-      setTotalSupply(ethers.utils.formatUnits(totalSupply, 18)); // 根据合约的decimals调整
+    const totalSupply = await contract.totalSupply();
+    setTotalSupply(ethers.utils.formatUnits(totalSupply, 18)); // 根据合约的decimals调整
 
-      // 获取当前钱包的代币余额
-      if (isConnected) {
-        const balance = await contract.balanceOf(walletAddress);
-        // 假设我们将代币余额存储在状态中
-        setTokenBalance(ethers.utils.formatUnits(balance, 18)); // 根据合约的decimals调整
-      }
-    } catch (err) {
-      console.error("获取总供应量时出错:", err);
+    // 获取当前钱包的代币余额
+    if (isConnected) {
+      const balance = await contract.balanceOf(walletAddress);
+      // 假设我们将代币余额存储在状态中
+      setTokenBalance(ethers.utils.formatUnits(balance, 18)); // 根据合约的decimals调整
     }
   };
 
