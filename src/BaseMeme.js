@@ -59,25 +59,20 @@ function BaseMeme() {
     const signer = provider.getSigner(); // 获取签名者
     const contract = new ethers.Contract(contractAddress, abi, signer);
 
-    try {
-      const tx = await contract.mint(); // 调用铸造方法
-      await tx.wait(); // 等待交易确认
-      setMintTx(tx.hash); // 保存交易哈希
-      const newBalance = await contract.balanceOf(walletAddress); // 获取新的余额
-      const mintedAmount = ethers.utils.formatUnits(newBalance, 18) - tokenBalance; // 计算铸造的数量
-      setLastBalance(mintedAmount); // 更新上次铸造的余额
+    const tx = await contract.mint(); // 调用铸造方法
+    await tx.wait(); // 等待交易确认
+    setMintTx(tx.hash); // 保存交易哈希
+    const newBalance = await contract.balanceOf(walletAddress); // 获取新的余额
+    const mintedAmount = ethers.utils.formatUnits(newBalance, 18) - tokenBalance; // 计算铸造的数量
+    setLastBalance(mintedAmount); // 更新上次铸造的余额
 
-      // 新增代码：更新最后铸币时间和下一次铸币间隔
-      const lastMintTime = await contract.lastMint(walletAddress);
-      const mintInterval = await contract.nextMintInterval(walletAddress);
-      const nextMintTime = lastMintTime.add(mintInterval);
-      setNextMintTime(nextMintTime.toNumber()); // 更新状态
-      setShowSuccessModal(true); // 显示弹窗
-    } catch (err) {
-      console.error("铸造时出错:", err);
-    } finally {
-      setIsMinting(false); // 无论成功与否，铸造结束后重置状态
-    }
+    // 新增代码：更新最后铸币时间和下一次铸币间隔
+    const lastMintTime = await contract.lastMint(walletAddress);
+    const mintInterval = await contract.nextMintInterval(walletAddress);
+    const nextMintTime = lastMintTime.add(mintInterval);
+    setNextMintTime(nextMintTime.toNumber()); // 更新状态
+    setShowSuccessModal(true); // 显示弹窗
+    setIsMinting(false); // 无论成功与否，铸造结束后重置状态
   };
 
   // 获取铸造状态
@@ -88,12 +83,8 @@ function BaseMeme() {
     ];
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(contractAddress, abi, provider);
-    try {
-      const status = await contract.mintingEnded();
-      setMintingEnded(status); // 更新铸造状态
-    } catch (err) {
-      console.error("获取铸造状态时出错:", err);
-    }
+    const status = await contract.mintingEnded();
+    setMintingEnded(status); // 更新铸造状态
   };
 
   // 获取最后铸币时间和下一次铸币间隔
@@ -105,15 +96,11 @@ function BaseMeme() {
     ];
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     const contract = new ethers.Contract(contractAddress, abi, provider);
-    try {
-      const lastMintTime = await contract.lastMint(walletAddress);
-      const mintInterval = await contract.nextMintInterval(walletAddress);
-      const currentTime = Math.floor(Date.now() / 1000); // 获取当前时间（秒）
-      const nextMintTime = lastMintTime.add(mintInterval); // 计算下一次铸币时间
-      setNextMintTime(nextMintTime.toNumber()); // 更新状态
-    } catch (err) {
-      console.error("获取铸币信息时出错:", err);
-    }
+    const lastMintTime = await contract.lastMint(walletAddress);
+    const mintInterval = await contract.nextMintInterval(walletAddress);
+    const currentTime = Math.floor(Date.now() / 1000); // 获取当前时间（秒）
+    const nextMintTime = lastMintTime.add(mintInterval); // 计算下一次铸币时间
+    setNextMintTime(nextMintTime.toNumber()); // 更新状态
   };
 
   // 初始化效果
