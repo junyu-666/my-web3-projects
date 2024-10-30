@@ -96,8 +96,8 @@ function BaseMeme() {
   });
   console.log(err3)
   // 将uint格式转成正常格式
-  const totalSupply = ethers.utils.formatUnits(totalSupply1, 18);
-  const tokenBalance = ethers.utils.formatUnits(tokenBalance1, 18);
+  const totalSupply = totalSupply1 ? ethers.utils.formatUnits(totalSupply1, 18) : 'N/A';
+  const tokenBalance = tokenBalance1 ? ethers.utils.formatUnits(tokenBalance1, 18) : 'N/A';
 
   // 铸造 BMI 的方法
   const mintBMI = async () => {
@@ -145,13 +145,11 @@ function BaseMeme() {
     setNextMintTime(nextMintTime.toNumber()); // 更新状态
   };
 
-  // 初始化效果
+  // 当钱包连接状态变化或者切换钱包时运行
   useEffect(() => {
     const init = async () => {
-      // await getMintingStatus();
       if(isConnected){
         const walletAddress = address
-        // await getTotalSupply();
         await getMintingInfo(); // 添加此行以获取铸币信息
       }
     };
