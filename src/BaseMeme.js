@@ -12,12 +12,14 @@ function BaseMeme() {
   
   // 定义状态变量
   const { isConnected, address } = useAccount();
-  const walletAddress = address
+  const [walletAddress, setWalletAddress] = useState(address);
   const [showSuccessModal, setShowSuccessModal] = useState(false); // 铸造成功弹窗显示
   const [lasttotalSupply, setlasttotalSupply] = useState(false); // 最后铸造总量
   const [lastBalance, setLastBalance] = useState(0); // 最后铸造数量
+  const [mtBalance, setMtBalance] = useState(0);  // mint数量
   const [timeLeft, setTimeLeft] = useState(0); // 距离下次铸造剩余时间
   const [showHelpModal, setShowHelpModal] = useState(false); // 说明弹窗状态
+  const [confirm, setConfirm] = useState(false);  // 合约交互成功状态
   const [confirmed, setConfirmed] = useState(false);  //本地mint成功状态
 
   const contractABI = [
@@ -174,37 +176,55 @@ function BaseMeme() {
       args: [],
     })
   }
-  const { isLoading: isConfirming, isSuccess: isConfirmed } =
+  // 获取mint合约状态
+  const { isLoading: isConfirming, isSuccess: isConfirmed, queryKey: ConfirmKey } =
     useWaitForTransactionReceipt({
       hash
   })
   console.log("isLoading", isConfirming, "isSuccess", isConfirmed)
 
+  // 当合约写入成功
+  useEffect(() => {
+    if(isConfirmed){
+      setConfirm(true)
+    }
+  }, [isConfirmed]);
+
   useEffect(() => {
     const init = async () => {
       if (isConnected) {
-        const walletAddress = address;
+        setWalletAddress(address);
       }
-      if (isConfirmed && !confirmed) {
+      if (confirm) {
         setlasttotalSupply(totalSupply)
         setLastBalance(tokenBalance)
-        queryClient.invalidateQueries({ mintingKey, totalSupplyKey, tokenBalanceKey, lastMintTimeKey, mintIntervalKey})
+        queryClient.invalidateQueries({ mintingKey, totalSupplyKey, tokenBalanceKey, lastMintTimeKey, mintIntervalKey, ConfirmKey})
         setConfirmed(true);
+        setConfirm(false);
       }
     };
     init();
-  }, [address, isConnected, isConfirmed, confirmed]);
+  }, [address, isConnected, confirm]);
 
-  // 铸造成功弹窗显示
+  // mint数量计算
   useEffect(() => {
-    if (tokenBalance !== lastBalance && totalSupply !== lasttotalSupply && isConfirmed && confirmed) {
+    if (confirmed) {
       const mintBalance = tokenBalance - lastBalance
       console.log("mintBalance", mintBalance)
-      setLastBalance(mintBalance)
-      console.log("mint", lastBalance)
-      setShowSuccessModal(true);
+      setMtBalance(mintBalance)
+      console.log("mint", mtBalance)
+      setlasttotalSupply(totalSupply)
+      setLastBalance(tokenBalance)
+      setConfirmed(false);
     }
   }, [tokenBalance, totalSupply]);
+
+  // 当mint数量变化且不为0时显示成功弹窗
+  useEffect(() => {
+    if(mtBalance){
+      setShowSuccessModal(true);
+    }
+  }, [mtBalance]);
 
   // 更新倒计时
   useEffect(() => {
@@ -219,15 +239,6 @@ function BaseMeme() {
 
     return () => clearInterval(interval); // 清理定时器
   }, [nextMintTime]);
-
-  // reset confirmed state
-  useEffect(() => {
-    if (confirmed && !isConfirmed) {
-      setConfirmed(false);
-      setlasttotalSupply(totalSupply)
-      setLastBalance(tokenBalance)
-    }
-  }, [isConfirmed]);
 
   // 将剩余时间转换为h-m-s格式
   const formatTimeLeft = (seconds) => {
@@ -274,7 +285,7 @@ function BaseMeme() {
           <div className="fixed inset-0 flex items-center justify-center bg-opacity-50">
             <div className="bg-[#131336] p-12 rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.6)]">
               <div className='mx-4'>
-                <h2 className="text-white text-3xl mb-2">Minted Amount: {lastBalance} BMI</h2>
+                <h2 className="text-white text-3xl mb-2">Minted Amount: {mtBalance} BMI</h2>
                 <p className="text-white text-2xl mb-1">
                   Transaction: <a href={`https://basescan.org/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Basescan</a>
                 </p>
