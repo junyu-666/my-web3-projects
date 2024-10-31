@@ -197,7 +197,7 @@ function BaseMeme() {
 
   // 铸造成功弹窗显示
   useEffect(() => {
-    if (tokenBalance !== lastBalance && totalSupply !== lasttotalSupply && isConfirmed) {
+    if (tokenBalance !== lastBalance && totalSupply !== lasttotalSupply && isConfirmed && confirmed) {
       const mintBalance = tokenBalance - lastBalance
       console.log("mintBalance", mintBalance)
       setLastBalance(mintBalance)
