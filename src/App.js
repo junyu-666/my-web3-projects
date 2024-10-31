@@ -20,10 +20,10 @@ import {
 const config = getDefaultConfig({
   appName: 'basememe',
   projectId: '76641386b896e258eb94f6c6bbc6942b',
-  chains: [base],
-  transports: {
-    [base.id]: http('https://base.drpc.org'),
-  },
+  chains: [base]
+  // transports: {
+  //   [base.id]: http('https://base.drpc.org'),
+  // },
 });
 
 const queryClient = new QueryClient();
