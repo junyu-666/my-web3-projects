@@ -125,7 +125,7 @@ function BaseMeme() {
     functionName: 'mintingEnded',
     args: [],
   });
-  console.log(mintingEnded)
+  // console.log(mintingEnded)
   // 读取总供应量
   const { data: totalSupply1, queryKey: totalSupplyKey, error: err2 } = useReadContract({
     ...wagmiContractConfig,
@@ -143,8 +143,8 @@ function BaseMeme() {
   // 将uint格式转成正常格式
   const totalSupply = totalSupply1 ? ethers.utils.formatUnits(totalSupply1, 18) : 0;
   const tokenBalance = tokenBalance1 ? ethers.utils.formatUnits(tokenBalance1, 18) : 0;
-  console.log(totalSupply)
-  console.log(tokenBalance)
+  // console.log(totalSupply)
+  // console.log(tokenBalance)
   // 读取最后铸造时间
   const { data: lastMintTime, queryKey: lastMintTimeKey, error: err4 } = useReadContract({
     ...wagmiContractConfig,
@@ -163,11 +163,11 @@ function BaseMeme() {
   const mintIntervalNum = mintInterval ? Number(mintInterval) : 0;
   // 计算下一次可铸造时间
   const nextMintTime = lastMintTimeNum + mintIntervalNum;
-  console.log(nextMintTime)
+  // console.log(nextMintTime)
 
   // 铸造MBI代币
   const { data: hash, isPending , writeContract } = useWriteContract()
-  console.log("isPending ", isPending )
+  // console.log("isPending ", isPending )
   async function mintMMI(e) {
     writeContract({
       ...wagmiContractConfig,
@@ -208,9 +208,9 @@ function BaseMeme() {
   useEffect(() => {
     if (confirmed) {
       const mintBalance = tokenBalance - lastBalance
-      console.log("mintBalance", mintBalance)
+      // console.log("mintBalance", mintBalance)
       setMtBalance(mintBalance)
-      console.log("mint", mtBalance)
+      // console.log("mint", mtBalance)
       setLastBalance(tokenBalance)
       setConfirmed(false);
     }
@@ -230,7 +230,7 @@ function BaseMeme() {
         const currentTime = Math.floor(Date.now() / 1000); // 获取当前时间（秒）
         const remainingTime = nextMintTime - currentTime; // 计算剩余时间
         setTimeLeft(remainingTime > 0 ? remainingTime : 0); // 更新剩余时间
-        console.log("timeLeft", timeLeft)
+        // console.log("timeLeft", timeLeft)
       }
     }, 1000); // 每秒更新一次
 
