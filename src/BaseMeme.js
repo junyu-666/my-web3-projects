@@ -116,7 +116,7 @@ function BaseMeme() {
   ];
 
   const wagmiContractConfig = {
-    address: '0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A', 
+    address: '0xC8F8294A24023235Be5f568b265e83064F2d9405', 
     abi: contractABI,
   };
 
@@ -169,7 +169,7 @@ function BaseMeme() {
   // 铸造MBI代币
   const { data: hash, isPending , writeContract } = useWriteContract()
   console.log("isPending ", isPending )
-  async function mintBMI(e) {
+  async function mintMMI(e) {
     writeContract({
       ...wagmiContractConfig,
       functionName: 'mint',
@@ -255,10 +255,10 @@ function BaseMeme() {
     }
     return (
       <button 
-        onClick={isPending || isConfirming ? null : mintBMI} // 如果正在铸造，禁用按钮
+        onClick={isPending || isConfirming ? null : mintMMI} // 如果正在铸造，禁用按钮
         className={`mt-4 px-8 py-3 ${isPending || isConfirming ? 'bg-gray-500' : 'bg-white'} text-black text-lg mb-1 rounded-lg transition duration-300 flex text-center hover:bg-blue-500 hover:text-white`}
       >
-        {isPending || isConfirming ? 'Minting...' : 'Mint BasedMining'}
+        {isPending || isConfirming ? 'Minting...' : 'Mint MorphMining'}
       </button>
     );
   };
@@ -270,14 +270,14 @@ function BaseMeme() {
         <div className="flex justify-center mb-4">
           <ConnectButton />
         </div>
-        <h1 className="text-6xl font-bold text-[#4AC8FF] mb-2">BasedMining</h1>
+        <h1 className="text-6xl font-bold text-[#4AC8FF] mb-2">MorphMining</h1>
         <p className="text-2xl text-white mb-1">Free Mining for Everyone</p>
         <p className="text-xl text-white mb-1">all is onchain</p>
         {isConnected && (
           <div className='flex flex-col items-center justify-center'>
             <p className="text-3xl text-white mb-1">{mintingEnded ? 'Minting Ended' : 'Minting'}</p>
-            <p className="text-white mb-1">Total Supply: {totalSupply !== undefined ? Math.floor(totalSupply)+' BMI' : 'Loading...'}</p>
-            <p className="text-white mb-1">Your BMI Balance: {tokenBalance !== undefined ? Math.floor(tokenBalance)+' BMI' : 'Loading...'}</p>
+            <p className="text-white mb-1">Total Supply: {totalSupply !== undefined ? Math.floor(totalSupply)+' MMI' : 'Loading...'}</p>
+            <p className="text-white mb-1">Your MMI Balance: {tokenBalance !== undefined ? Math.floor(tokenBalance)+' MMI' : 'Loading...'}</p>
             {renderMintButton()} {/* 调用渲染按钮的函数 */}
           </div>
         )}
@@ -285,7 +285,7 @@ function BaseMeme() {
           <div className="fixed inset-0 flex items-center justify-center bg-opacity-50">
             <div className="bg-[#131336] p-12 rounded-3xl shadow-[0_0_20px_rgba(0,0,0,0.6)]">
               <div className='mx-4'>
-                <h2 className="text-white text-3xl mb-2">Minted Amount: {mtBalance} BMI</h2>
+                <h2 className="text-white text-3xl mb-2">Minted Amount: {mtBalance} MMI</h2>
                 <p className="text-white text-2xl mb-1">
                   Transaction: <a href={`https://basescan.org/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Basescan</a>
                 </p>
@@ -314,15 +314,15 @@ function BaseMeme() {
           <div className='flex flex-col items-center'>
             <h1 className='text-white text-2xl m-4'>How to play:</h1>
             <p className="text-white text-center">
-                BasedMining is an ERC20 token that<br />
+                MorphMining is an ERC20 token that<br />
                 you can mint for free.<br /><br />
 
                 Each phase has its own mining multiplier.<br />
                 The base mining value is a random<br />
-                amount between 1 and 50 BMI<br /><br />
+                amount between 1 and 50 MMI<br /><br />
 
                 In Phase 1, the mining output ranges<br />
-                from 10 to 500 BMI per mint.<br /><br />
+                from 10 to 500 MMI per mint.<br /><br />
 
                 Another random factor is the cooldown time,<br />
                 which is independent of the phase and varies<br />
@@ -330,7 +330,7 @@ function BaseMeme() {
 
                 Each phase lasts 3 days.<br /><br />
 
-                28.10.2024 - BasedMining started!<br /><br />
+                31.10.2024 - MorphMining started!<br /><br />
 
                 Once Phase 0 is reached, mining will end.<br />
                 Fun and educational.<br /><br />
