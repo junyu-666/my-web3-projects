@@ -214,11 +214,11 @@ function BaseMeme() {
       setLastBalance(tokenBalance)
       setConfirmed(false);
     }
-  }, [tokenBalance, totalSupply]);
+  }, [tokenBalance]);
 
   // 当mint数量变化且不为0时显示成功弹窗
   useEffect(() => {
-    if(mtBalance){
+    if(mtBalance > 0){
       setShowSuccessModal(true);
     }
   }, [mtBalance]);
@@ -336,7 +336,7 @@ function BaseMeme() {
             </p>
             <button 
             onClick={() => setShowHelpModal(false)}
-            className='bg-white text-black px-4 py-2 mt-4 rounded-xl'
+            className='bg-white text-black px-4 py-2 mt-4 rounded-xl hover:bg-blue-500 hover:text-white'
             >
               X
             </button>
