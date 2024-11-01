@@ -284,7 +284,7 @@ function BaseMeme() {
               <div className='mx-4'>
                 <h2 className="text-white text-3xl mb-2">Minted Amount: {mtBalance} MMI</h2>
                 <p className="text-white text-2xl mb-1">
-                  Transaction: <a href={`https://explorer.morphl2.io/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Basescan</a>
+                  Transaction: <a href={`https://explorer.morphl2.io/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Morphscan</a>
                 </p>
                 <button
                   onClick={() => setShowSuccessModal(false)} 
