@@ -14,7 +14,6 @@ function BaseMeme() {
   const { isConnected, address } = useAccount();
   const [walletAddress, setWalletAddress] = useState(address);
   const [showSuccessModal, setShowSuccessModal] = useState(false); // 铸造成功弹窗显示
-  const [lasttotalSupply, setlasttotalSupply] = useState(false); // 最后铸造总量
   const [lastBalance, setLastBalance] = useState(0); // 最后铸造数量
   const [mtBalance, setMtBalance] = useState(0);  // mint数量
   const [timeLeft, setTimeLeft] = useState(0); // 距离下次铸造剩余时间
@@ -196,7 +195,6 @@ function BaseMeme() {
         setWalletAddress(address);
       }
       if (confirm) {
-        setlasttotalSupply(totalSupply)
         setLastBalance(tokenBalance)
         queryClient.invalidateQueries({ mintingKey, totalSupplyKey, tokenBalanceKey, lastMintTimeKey, mintIntervalKey, ConfirmKey})
         setConfirmed(true);
@@ -213,7 +211,6 @@ function BaseMeme() {
       console.log("mintBalance", mintBalance)
       setMtBalance(mintBalance)
       console.log("mint", mtBalance)
-      setlasttotalSupply(totalSupply)
       setLastBalance(tokenBalance)
       setConfirmed(false);
     }
@@ -287,7 +284,7 @@ function BaseMeme() {
               <div className='mx-4'>
                 <h2 className="text-white text-3xl mb-2">Minted Amount: {mtBalance} MMI</h2>
                 <p className="text-white text-2xl mb-1">
-                  Transaction: <a href={`https://basescan.org/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Basescan</a>
+                  Transaction: <a href={`https://explorer.morphl2.io/tx/${hash}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">Basescan</a>
                 </p>
                 <button
                   onClick={() => setShowSuccessModal(false)} 
@@ -335,7 +332,7 @@ function BaseMeme() {
                 Once Phase 0 is reached, mining will end.<br />
                 Fun and educational.<br /><br />
 
-                Contract : <a href={`https://basescan.org/address/0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">0x5656Cf1E37b2336a8Ef065ab16405aa5E756C99A</a>
+                Contract : <a href={`https://explorer.morphl2.io/address/${wagmiContractConfig.address}`} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{wagmiContractConfig.address}</a>
             </p>
             <button 
             onClick={() => setShowHelpModal(false)}
