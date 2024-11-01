@@ -20,6 +20,7 @@ function BaseMeme() {
   const [showHelpModal, setShowHelpModal] = useState(false); // 说明弹窗状态
   const [confirm, setConfirm] = useState(false);  // 合约交互成功状态
   const [confirmed, setConfirmed] = useState(false);  //本地mint成功状态
+  const [activePhase, setActivePhase] = useState(0); // 轮次变量
 
   const contractABI = [
     {
@@ -175,12 +176,12 @@ function BaseMeme() {
       args: [],
     })
   }
-  // 获取mint合约状态
+  // 获mint合约状态
   const { isLoading: isConfirming, isSuccess: isConfirmed, queryKey: ConfirmKey } =
     useWaitForTransactionReceipt({
       hash
   })
-  console.log("isLoading", isConfirming, "isSuccess", isConfirmed)
+  // console.log("isLoading", isConfirming, "isSuccess", isConfirmed)
 
   // 当合约写入成功
   useEffect(() => {
