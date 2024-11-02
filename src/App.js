@@ -16,6 +16,7 @@ import {
   QueryClientProvider,
   QueryClient,
 } from "@tanstack/react-query";
+import { Analytics } from "@vercel/analytics/react"
 
 // 自定义morph网络
 const Morph = {
@@ -47,6 +48,7 @@ const App = () => {
         <RainbowKitProvider>
           <Router>
           <div className="min-h-screen">
+            <Analytics />
             <Routes>
               <Route path="/" element={<BaseMeme />} />
             </Routes>
