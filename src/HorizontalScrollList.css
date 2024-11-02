@@ -1,0 +1,36 @@
+.horizontal-scroll-container {
+  display: flex; /* 使用flex布局 */
+  overflow-x: auto; /* 允许水平滚动 */
+  overflow-y: hidden; /* 隐藏垂直滚动条 */
+  white-space: nowrap; /* 防止换行 */
+  padding: 3px; /* 添加内边距 */
+  /* border: 1px solid #ccc; 添加边框 */
+  scrollbar-width: none; /* Firefox隐藏滚动条 */
+  width: 500px; /* 限制宽度 */
+}
+
+.horizontal-scroll-container::-webkit-scrollbar {
+  display: none; /* Chrome和Safari隐藏滚动条 */
+}
+
+.scroll-item {
+  min-width: 100px; /* 每个项目的最小宽度 */
+  min-height: 50px;
+  margin-right: 10px; /* 项目之间的间距 */
+  padding: 5px; /* 内边距 */
+  background-color: #414159; /* 背景颜色 */
+  border-radius: 10px; /* 圆角 */
+  display: flex; /* 使用flex布局 */
+  flex-direction: column; /* 内部组件垂直排列 */
+  justify-content: center; /* 内容水平居中 */
+  align-items: center; /* 内容垂直居中 */
+} 
+
+.blue-background {
+  background-color: #4AC8FF; /* 条件成立时的背景颜色 */
+}
+
+.red-bg{
+  background-color: #3B1A30; /* 条件成立时的背景颜色 */
+}
+

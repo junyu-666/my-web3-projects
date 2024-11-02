@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { ethers } from 'ethers';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useAccount, useWaitForTransactionReceipt, useReadContract, useWriteContract  } from 'wagmi';
+import HorizontalScrollList from './HorizontalScrollList'
 
 function BaseMeme() {
   const queryClient = useQueryClient()
@@ -23,6 +24,19 @@ function BaseMeme() {
   const [activePhase, setActivePhase] = useState(0); // 轮次变量
 
   const contractABI = [
+    {
+      "inputs": [],
+      "name": "multiplier",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
     {
       "inputs": [],
       "name": "mintingEnded",
@@ -120,6 +134,12 @@ function BaseMeme() {
     abi: contractABI,
   };
 
+  // 读取当前乘数
+  const {data: multiplier} = useReadContract({
+    ...wagmiContractConfig,
+    functionName: 'multiplier',
+    args: [],
+  });
   // 读取合约铸造状态
   const { data: mintingEnded, queryKey: mintingKey, error: err1 } = useReadContract({
     ...wagmiContractConfig,
@@ -192,6 +212,7 @@ function BaseMeme() {
 
   useEffect(() => {
     const init = async () => {
+      setActivePhase(10 - Number(multiplier));
       if (isConnected) {
         setWalletAddress(address);
       }
@@ -203,7 +224,7 @@ function BaseMeme() {
       }
     };
     init();
-  }, [address, isConnected, confirm]);
+  }, [address, isConnected, confirm, multiplier]);
 
   // mint数量计算
   useEffect(() => {
@@ -268,12 +289,15 @@ function BaseMeme() {
         <div className="flex justify-center mb-4">
           <ConnectButton />
         </div>
+        {isConnected && (
+          <HorizontalScrollList activePhase={activePhase} />
+        )}
         <h1 className="text-6xl font-bold text-[#4AC8FF] mb-2">MorphMining</h1>
         <p className="text-2xl text-white mb-1">Free Mining for Everyone</p>
         <p className="text-xl text-white mb-1">all is onchain</p>
         {isConnected && (
           <div className='flex flex-col items-center justify-center'>
-            <p className="text-3xl text-white mb-1">{mintingEnded ? 'Minting Ended' : 'Minting'}</p>
+            <p className="text-3xl text-white mb-1">{mintingEnded || activePhase === 10 ? 'Minting Ended' : `Phase ${activePhase + 1} - Multiplier X${multiplier}`}</p>
             <p className="text-white mb-1">Total Supply: {totalSupply !== undefined ? Math.floor(totalSupply)+' MMI' : 'Loading...'}</p>
             <p className="text-white mb-1">Your MMI Balance: {tokenBalance !== undefined ? Math.floor(tokenBalance)+' MMI' : 'Loading...'}</p>
             {renderMintButton()} {/* 调用渲染按钮的函数 */}
